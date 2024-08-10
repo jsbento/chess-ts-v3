@@ -55,21 +55,24 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
   const [charBoard, setCharBoard] = useState<string[]>(getCharBoard(chess))
   const [promotion, setPromotion] = useState<Move | undefined>(undefined)
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece | null>(null)
+  const gameOver = chess.isGameOver()
 
-  const resetBoard = () => {
-    chess.reset()
-    updateCharBoard()
-  }
+  useEffect(() => {
+    if (gameOver) {
+      dispatch(openGameStatusModal(getGameStatus(chess)))
+    }
+  }, [dispatch, gameOver])
+
+  useEffect(() => {
+    if (fen) {
+      chess.load(fen)
+      updateCharBoard()
+    }
+  }, [fen])
 
   const updateCharBoard = () => {
     setCharBoard(getCharBoard(chess))
   }
-
-  useEffect(() => {
-    if (chess.isGameOver()) {
-      dispatch(openGameStatusModal(getGameStatus(chess)))
-    }
-  }, [chess.isGameOver()])
 
   const onMove = ({ from, to }: Move) => {
     setSelectedPiece(null)
@@ -113,7 +116,7 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
     e.preventDefault()
     e.stopPropagation()
 
-    if (selectedPiece && selectedPiece.id == id) {
+    if (selectedPiece?.id === id) {
       setSelectedPiece(null)
       return
     }
@@ -127,6 +130,11 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
       id,
       moves: moves.map((move) => squareToIndex(move)),
     })
+  }
+
+  const resetBoard = () => {
+    chess.reset()
+    updateCharBoard()
   }
 
   const renderPieceCell = (cell: string, idx: number) => {
@@ -177,7 +185,8 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
     })
 
     return cells
-  }, [charBoard, cellSize, promotion, selectedPiece])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [charBoard, cellSize, selectedPiece, promotion])
 
   return (
     <div ref={ref} style={{ width: size, height: size }}>

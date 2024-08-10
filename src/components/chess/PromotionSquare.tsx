@@ -1,8 +1,9 @@
 import React from 'react'
 
 import { getPieceImage } from '../../utils'
-
 import { PromotionPiece } from '../../types'
+
+const PromotionPieces: PromotionPiece[] = ['q', 'r', 'b', 'n']
 
 interface PromotionSquareProps {
   turn: string
@@ -15,7 +16,7 @@ const PromotionSquare: React.FC<PromotionSquareProps> = ({
 }) => {
   return (
     <div className='w-full grid grid-cols-2 grid-rows-2'>
-      {(['q', 'r', 'b', 'n'] as PromotionPiece[]).map((piece) => (
+      {PromotionPieces.map((piece) => (
         <img
           key={piece}
           src={getPieceImage(piece, turn === 'b' ? 'black' : 'white')}

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Modal from '../common/Modal'
+import Modal from '../common/modal/Modal'
 
 import { useAppDispatch, useAppSelector } from '../../hooks'
 import { closeGameStatusModal } from '../../state/reducers'
