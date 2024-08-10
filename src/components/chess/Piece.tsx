@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { MouseEvent } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 
@@ -8,9 +8,10 @@ interface PieceProps {
   id: string
   piece: string
   color: 'black' | 'white'
+  onClick?: (e: MouseEvent<HTMLElement>) => void
 }
 
-const Piece: React.FC<PieceProps> = ({ id, piece, color }) => {
+const Piece: React.FC<PieceProps> = ({ id, piece, color, onClick }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
   })
@@ -20,7 +21,7 @@ const Piece: React.FC<PieceProps> = ({ id, piece, color }) => {
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes} onClick={onClick}>
       <img src={getPieceImage(piece, color)} alt={piece} />
     </div>
   )

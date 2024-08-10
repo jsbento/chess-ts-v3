@@ -15,7 +15,7 @@ const PromotionSquare: React.FC<PromotionSquareProps> = ({ turn, onPromote }) =>
       {(['q', 'r', 'b', 'n'] as PromotionPiece[]).map((piece) => (
         <img
           key={piece}
-          src={getPieceImage(piece, turn)}
+          src={getPieceImage(piece, turn === 'b' ? 'black' : 'white')}
           alt={piece}
           className='cursor-pointer'
           onClick={() => onPromote(piece)}
