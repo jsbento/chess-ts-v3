@@ -11,7 +11,13 @@ interface BoardCellProps {
   children?: React.ReactNode
 }
 
-const BoardCell: React.FC<BoardCellProps> = ({ id, color, size, highlight, children }) => {
+const BoardCell: React.FC<BoardCellProps> = ({
+  id,
+  color,
+  size,
+  highlight,
+  children,
+}) => {
   const { isOver, setNodeRef } = useDroppable({
     id,
   })

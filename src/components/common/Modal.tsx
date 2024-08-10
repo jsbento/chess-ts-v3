@@ -1,41 +1,35 @@
-import React, { useState, useEffect, useRef, KeyboardEvent } from 'react'
+import React, { useEffect, useRef, KeyboardEvent } from 'react'
 import './Modal.css'
 
 interface ModalProps {
   isOpen: boolean
   showCloseButton?: boolean
-  onClose?: () => void
+  close: () => void
   children: React.ReactNode
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, showCloseButton, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  showCloseButton,
+  close,
+  children,
+}) => {
   const ref = useRef<HTMLDialogElement | null>(null)
-
-  const [isModalOpen, setIsModalOpen] = useState(isOpen)
-
-  useEffect(() => {
-    setIsModalOpen(isOpen)
-  }, [isOpen])
 
   useEffect(() => {
     const modalElem = ref.current
     if (modalElem) {
-      if (isModalOpen) {
+      if (isOpen) {
         modalElem.showModal()
       } else {
         modalElem.close()
       }
     }
-  }, [isModalOpen])
-
-  const onCloseModal = () => {
-    onClose && onClose()
-    setIsModalOpen(false)
-  }
+  }, [isOpen])
 
   const onKeyDown = (e: KeyboardEvent<HTMLDialogElement>) => {
     if (e.key === 'Escape') {
-      onCloseModal()
+      close()
     }
   }
 
@@ -43,7 +37,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, showCloseButton, onClose, childre
     <dialog ref={ref} className='modal' onKeyDown={onKeyDown}>
       <div className='modal-content'>
         {showCloseButton && (
-          <button className='modal-close-btn' onClick={onCloseModal}>
+          <button className='modal-close-btn' onClick={close}>
             &times;
           </button>
         )}

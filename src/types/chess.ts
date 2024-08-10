@@ -4,3 +4,8 @@ export type Move = {
   from: string
   to: string
 }
+
+export type SelectedPiece = {
+  id: number
+  moves: number[]
+}

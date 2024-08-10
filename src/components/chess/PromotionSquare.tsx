@@ -9,7 +9,10 @@ interface PromotionSquareProps {
   onPromote: (promotionPiece: PromotionPiece) => void
 }
 
-const PromotionSquare: React.FC<PromotionSquareProps> = ({ turn, onPromote }) => {
+const PromotionSquare: React.FC<PromotionSquareProps> = ({
+  turn,
+  onPromote,
+}) => {
   return (
     <div className='w-full grid grid-cols-2 grid-rows-2'>
       {(['q', 'r', 'b', 'n'] as PromotionPiece[]).map((piece) => (

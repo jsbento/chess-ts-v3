@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef, MouseEvent } from 'react'
-import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
 import { Chess } from 'chess.js'
 
 import { useDimensions } from '../../hooks'
@@ -10,14 +16,17 @@ import {
   getPossiblePromotions,
   squareToIndex,
   indexToSquare,
+  getGameStatus,
 } from '../../utils'
 
 import BoardCell from './BoardCell'
 import Piece from './Piece'
 import PromotionSquare from './PromotionSquare'
-import Modal from '../common/Modal'
+import GameStatusModal from './GameStatusModal'
 
-import { PromotionPiece, Move } from '../../types'
+import { useAppDispatch } from '../../hooks'
+import { openGameStatusModal } from '../../state/reducers'
+import { PromotionPiece, Move, SelectedPiece } from '../../types'
 
 const DefaultFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 const chess = new Chess(DefaultFEN)
@@ -28,6 +37,8 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = ({ fen, size }) => {
+  const dispatch = useAppDispatch()
+
   const ref = useRef<HTMLDivElement>(null)
   const { width: boardWidth } = useDimensions(ref)
   const cellSize = boardWidth / 8
@@ -35,28 +46,33 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        delay: 100,
+        delay: 150,
         tolerance: boardWidth,
       },
     }),
   )
 
-  const [charBoard, setCharBoard] = useState<string[]>([])
+  const [charBoard, setCharBoard] = useState<string[]>(getCharBoard(chess))
   const [promotion, setPromotion] = useState<Move | undefined>(undefined)
-  const [selectedPiece, setSelectedPiece] = useState<number | null>(null)
-  const [selectedPieceMoves, setSelectedPieceMoves] = useState<number[] | null>(null)
+  const [selectedPiece, setSelectedPiece] = useState<SelectedPiece | null>(null)
+
+  const resetBoard = () => {
+    chess.reset()
+    updateCharBoard()
+  }
 
   const updateCharBoard = () => {
     setCharBoard(getCharBoard(chess))
   }
 
   useEffect(() => {
-    updateCharBoard()
-  }, [])
+    if (chess.isGameOver()) {
+      dispatch(openGameStatusModal(getGameStatus(chess)))
+    }
+  }, [chess.isGameOver()])
 
   const onMove = ({ from, to }: Move) => {
     setSelectedPiece(null)
-    setSelectedPieceMoves(null)
 
     const promotions = getPossiblePromotions(chess, from, to)
     if (promotions.length > 0) {
@@ -66,10 +82,11 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
     }
   }
 
-  const onPromote = (from: string, to: string) => (promotionPiece: PromotionPiece) => {
-    makeMove(from, to, promotionPiece)
-    setPromotion(undefined)
-  }
+  const onPromote =
+    (from: string, to: string) => (promotionPiece: PromotionPiece) => {
+      makeMove(from, to, promotionPiece)
+      setPromotion(undefined)
+    }
 
   const makeMove = (from: string, to: string, promotion?: PromotionPiece) => {
     const success = chess.move({
@@ -96,9 +113,8 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
     e.preventDefault()
     e.stopPropagation()
 
-    if (selectedPiece == id) {
+    if (selectedPiece && selectedPiece.id == id) {
       setSelectedPiece(null)
-      setSelectedPieceMoves(null)
       return
     }
 
@@ -107,16 +123,24 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
       .filter((move) => move.from === indexToSquare(id))
       .map((move) => move.to)
 
-    setSelectedPiece(id)
-    setSelectedPieceMoves(moves.map((move) => squareToIndex(move)))
+    setSelectedPiece({
+      id,
+      moves: moves.map((move) => squareToIndex(move)),
+    })
   }
 
   const renderPieceCell = (cell: string, idx: number) => {
     if (promotion && squareToIndex(promotion.to) === idx) {
       return (
-        <PromotionSquare turn={chess.turn()} onPromote={onPromote(promotion.from, promotion.to)} />
+        <PromotionSquare
+          turn={chess.turn()}
+          onPromote={onPromote(promotion.from, promotion.to)}
+        />
       )
-    } else if (cell !== 'empty' && !(promotion && squareToIndex(promotion.from) === idx)) {
+    } else if (
+      cell !== 'empty' &&
+      !(promotion && squareToIndex(promotion.from) === idx)
+    ) {
       const [color, piece] = cell
       return (
         <Piece
@@ -136,7 +160,8 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
 
     charBoard.forEach((cell, idx) => {
       const [rank, file] = indexToRankFile(idx)
-      const highlighted = selectedPieceMoves?.includes(idx)
+      const highlighted =
+        (selectedPiece && selectedPiece.moves.includes(idx)) || false
 
       cells.push(
         <BoardCell
@@ -152,45 +177,17 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
     })
 
     return cells
-  }, [charBoard, cellSize, promotion, selectedPieceMoves])
+  }, [charBoard, cellSize, promotion, selectedPiece])
 
   return (
     <div ref={ref} style={{ width: size, height: size }}>
       <DndContext onDragEnd={onDragEnd} sensors={sensors}>
-        <div className='grid grid-cols-8 grid-rows-8 w-full h-full'>{boardCells}</div>
+        <div className='grid grid-cols-8 grid-rows-8 w-full h-full'>
+          {boardCells}
+        </div>
       </DndContext>
-      <StatusModal />
+      <GameStatusModal resetBoard={resetBoard} />
     </div>
-  )
-}
-
-const StatusModal: React.FC = () => {
-  const pGameStatus = () => {
-    if (chess.isCheckmate()) {
-      return `Checkmate! ${chess.turn() === 'w' ? 'Black' : 'White'} wins!`
-    } else if (chess.isDraw()) {
-      return 'Draw!'
-    } else if (chess.isInsufficientMaterial()) {
-      return 'Draw by Insufficient Material!'
-    } else if (chess.isStalemate()) {
-      return 'Draw by Stalemate!'
-    } else if (chess.isThreefoldRepetition()) {
-      return 'Draw by Threefold Repetition!'
-    } else {
-      return 'Something strange happened!'
-    }
-  }
-
-  return (
-    <Modal isOpen={chess.isGameOver()} showCloseButton={true} onClose={() => chess.reset()}>
-      <div className='text-center'>
-        <h2 className='text-2xl font-bold'>Game Over!</h2>
-        <p className='text-lg'>{pGameStatus()}</p>
-        <button className='mt-10 bg-gray-700' onClick={() => chess.reset()}>
-          Reset
-        </button>
-      </div>
-    </Modal>
   )
 }
 

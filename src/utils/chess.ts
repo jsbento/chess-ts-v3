@@ -20,7 +20,9 @@ export const getCharBoard = (chess: Chess): string[] => {
 export const getPossiblePromotions = (chess: Chess, from: string, to: string) =>
   chess
     .moves({ verbose: true })
-    .filter((move) => move.promotion && `${move.from}:${move.to}` === `${from}:${to}`)
+    .filter(
+      (move) => move.promotion && `${move.from}:${move.to}` === `${from}:${to}`,
+    )
 
 export const indexToRankFile = (index: number): [number, number] => {
   const rank = 8 - Math.floor(index / 8)
@@ -53,4 +55,20 @@ export const squareToIndex = (square: string): number => {
 
 export const getPieceImage = (piece: string, color: string): string => {
   return `./src/assets/chess-pieces//Chess_${piece}${color === 'black' ? 'd' : 'l'}t60.png`
+}
+
+export const getGameStatus = (chess: Chess): string => {
+  if (chess.isCheckmate()) {
+    return `Checkmate! ${chess.turn() === 'w' ? 'Black' : 'White'} wins!`
+  } else if (chess.isDraw()) {
+    return 'Draw!'
+  } else if (chess.isInsufficientMaterial()) {
+    return 'Draw by Insufficient Material!'
+  } else if (chess.isStalemate()) {
+    return 'Draw by Stalemate!'
+  } else if (chess.isThreefoldRepetition()) {
+    return 'Draw by Threefold Repetition!'
+  } else {
+    return 'Something strange happened!'
+  }
 }

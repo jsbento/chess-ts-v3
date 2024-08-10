@@ -21,7 +21,13 @@ const Piece: React.FC<PieceProps> = ({ id, piece, color, onClick }) => {
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes} onClick={onClick}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      onClick={onClick}
+    >
       <img src={getPieceImage(piece, color)} alt={piece} />
     </div>
   )
