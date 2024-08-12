@@ -34,7 +34,7 @@
       "@utils": ["utils"],
       "@utils/*": ["utils/*"],
       "@types": ["types"],
-      "@types/*": ["types/*"],
+      "@types/*": ["types/*"]
     }
   },
   "include": ["src"]
