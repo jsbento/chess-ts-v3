@@ -8,7 +8,6 @@ import {
 } from '@dnd-kit/core'
 import { Chess } from 'chess.js'
 
-import { useDimensions } from '../../hooks'
 import {
   indexToRankFile,
   buildMove,
@@ -17,16 +16,16 @@ import {
   squareToIndex,
   indexToSquare,
   getGameStatus,
-} from '../../utils'
+} from '@utils'
 
 import BoardCell from './BoardCell'
 import Piece from './Piece'
 import PromotionSquare from './PromotionSquare'
 import GameStatusModal from './GameStatusModal'
 
-import { useAppDispatch } from '../../hooks'
-import { openGameStatusModal } from '../../state/reducers'
-import { PromotionPiece, Move, SelectedPiece } from '../../types'
+import { useDimensions, useAppDispatch } from '@hooks'
+import { openGameStatusModal, addMove, clearMoves } from '@reducers'
+import { PromotionPiece, Move, SelectedPiece } from '@types'
 
 const DefaultFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 const chess = new Chess(DefaultFEN)
@@ -92,14 +91,15 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
     }
 
   const makeMove = (from: string, to: string, promotion?: PromotionPiece) => {
-    const success = chess.move({
+    const move = chess.move({
       from,
       to,
       promotion,
     })
 
-    if (success) {
+    if (move) {
       updateCharBoard()
+      dispatch(addMove(move.san))
     }
   }
 
@@ -135,6 +135,7 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
   const resetBoard = () => {
     chess.reset()
     updateCharBoard()
+    dispatch(clearMoves())
   }
 
   const renderPieceCell = (cell: string, idx: number) => {

@@ -21,16 +21,3 @@
   top: 0.25em;
   right: 0.25em;
 }
-
-input[type='text'],
-input[type='email'],
-input[type='password'],
-button {
-  padding: 0.5em;
-  font: inherit;
-  line-height: 1;
-}
-
-button {
-  cursor: pointer;
-}

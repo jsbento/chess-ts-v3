@@ -1,9 +1,9 @@
 import React from 'react'
 
-import Modal from '../common/modal/Modal'
+import Modal from '@components/common/modal/Modal'
 
-import { useAppDispatch, useAppSelector } from '../../hooks'
-import { closeGameStatusModal } from '../../state/reducers'
+import { useAppDispatch, useAppSelector } from '@hooks'
+import { closeGameStatusModal } from '@reducers'
 
 interface GameStatusModalProps {
   resetBoard: () => void

@@ -2,7 +2,7 @@ import React, { MouseEvent } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 
-import { getPieceImage } from '../../utils'
+import { getPieceImage } from '@utils'
 
 interface PieceProps {
   id: string

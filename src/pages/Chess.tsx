@@ -1,11 +1,12 @@
 import React from 'react'
 
-import { Board } from '../components'
+import { Board, History } from '@components'
 
 const Chess: React.FC = () => {
   return (
-    <div className='flex w-full h-full justify-center items-center'>
+    <div className='grid grid-cols-2'>
       <Board size={500} />
+      <History />
     </div>
   )
 }

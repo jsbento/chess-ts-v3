@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDroppable } from '@dnd-kit/core'
 
-import { indexToSquare } from '../../utils'
+import { indexToSquare } from '@utils'
 
 interface BoardCellProps {
   id: string

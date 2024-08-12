@@ -1,2 +1,3 @@
 export * from './counter'
-export * from './gameStatus'
+export * from './gameStatusModal'
+export * from './chessMoves'
