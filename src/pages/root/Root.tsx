@@ -1,5 +1,5 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link } from 'react-router-dom'
 
 import './Root.css'
 
@@ -11,10 +11,10 @@ const Root: React.FC = () => {
         <nav>
           <ul>
             <li>
-              <a href={'/home'}>Home</a>
+              <Link to={'/home'}>Home</Link>
             </li>
             <li>
-              <a href={'/chess'}>Play</a>
+              <Link to={'/chess'}>Play</Link>
             </li>
           </ul>
         </nav>

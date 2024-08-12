@@ -8,7 +8,13 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prettier-all": "prettier --write ."
+    "prettier-all": "prettier --write .",
+    "code-check": "prettier --check . && eslint . && tsc --noEmit"
+  },
+  "pre-commit": {
+    "run": [
+      "code-check"
+    ]
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -30,6 +36,7 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "postcss": "^8.4.41",
+    "pre-commit": "^1.2.2",
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.9",
     "typescript": "^5.5.3",

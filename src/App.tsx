@@ -1,13 +1,14 @@
+import React from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-import { Root, Home, Chess } from './pages'
+import { Root, Home, Chess, Error } from './pages'
 import './App.css'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Root />,
-    errorElement: <div>Error: 404 Not Found</div>,
+    errorElement: <Error />,
     children: [
       {
         path: 'home',
@@ -21,8 +22,6 @@ const router = createBrowserRouter([
   },
 ])
 
-function App() {
-  return <RouterProvider router={router} />
-}
+const App: React.FC = () => <RouterProvider router={router} />
 
 export default App
