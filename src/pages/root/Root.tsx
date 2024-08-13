@@ -11,6 +11,9 @@ const Root: React.FC = () => {
         <nav>
           <ul>
             <li>
+              <Link to={'/auth'}>Auth</Link>
+            </li>
+            <li>
               <Link to={'/home'}>Home</Link>
             </li>
             <li>

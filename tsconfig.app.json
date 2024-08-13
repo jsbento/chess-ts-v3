@@ -23,6 +23,8 @@
     /* Import alias */
     "baseUrl": "./src",
     "paths": {
+      "@behavior": ["behavior"],
+      "@behavior/*": ["behavior/*"],
       "@components": ["components"],
       "@components/*": ["components/*"],
       "@pages": ["pages"],

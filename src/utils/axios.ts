@@ -6,6 +6,10 @@ const _axios = axios.create({
 _axios.defaults.timeout = 2500 // 2.5 seconds in milliseconds
 
 _axios.interceptors.request.use((config) => {
+  const token = window.localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
   return config
 })
 

@@ -3,7 +3,7 @@ import React from 'react'
 import { useAppSelector } from '@hooks'
 
 const History: React.FC = () => {
-  const { moves } = useAppSelector((state) => state.chessMoves)
+  const moves = useAppSelector((state) => state.chessMoves)
 
   const renderRows = () => {
     const rows = []

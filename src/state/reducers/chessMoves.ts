@@ -2,15 +2,14 @@ import { createSlice } from '@reduxjs/toolkit'
 
 export const chessMovesSlice = createSlice({
   name: 'chessMoves',
-  initialState: {
-    moves: [] as string[],
-  },
+  initialState: [] as string[],
   reducers: {
     addMove: (state, action) => {
-      state.moves.push(action.payload)
+      state = [...state, action.payload]
     },
     clearMoves: (state) => {
-      state.moves = []
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      state = []
     },
   },
 })
