@@ -13,7 +13,7 @@ export const signIn = async (
   data: SignInReq,
 ): Promise<User | null> => {
   try {
-    const resp = await post<SignInReq, AuthResp>('/api/users/signin', data)
+    const resp = await post<SignInReq, AuthResp>('/users/signin', data)
 
     if (!resp || !resp.user || !resp.token) {
       return null
@@ -34,7 +34,7 @@ export const signUp = async (
   data: SignUpReq,
 ): Promise<User | null> => {
   try {
-    const resp = await post<SignUpReq, AuthResp>('/api/users/signup', data)
+    const resp = await post<SignUpReq, AuthResp>('/users/signup', data)
 
     if (!resp || !resp.user || !resp.token) {
       return null

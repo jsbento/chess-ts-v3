@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const _axios = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_HOST,
 })
 _axios.defaults.timeout = 2500 // 2.5 seconds in milliseconds
 

@@ -11,10 +11,7 @@ export const evaluatePosition = async (
   req: EvaluationReq,
 ): Promise<number | null> => {
   try {
-    const resp = await post<EvaluationReq, EvaluationResp>(
-      '/api/chess/eval',
-      req,
-    )
+    const resp = await post<EvaluationReq, EvaluationResp>('/chess/eval', req)
     return resp.score
   } catch (err) {
     console.log(err)
@@ -27,7 +24,7 @@ export const searchPosition = async (
 ): Promise<string | null> => {
   try {
     const resp = await post<SearchPositionReq, SearchPositionResp>(
-      '/api/chess/search',
+      '/chess/search',
       req,
     )
     return resp.move

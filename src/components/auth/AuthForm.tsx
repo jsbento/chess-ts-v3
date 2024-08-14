@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import * as Yup from 'yup'
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
+import { useNavigate } from 'react-router-dom'
 
 import { signIn, signUp } from '@behavior'
 import { useAppDispatch } from '@hooks'
@@ -47,13 +48,19 @@ const signUpValues: SignUpValues = {
 
 const AuthForm: React.FC = () => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const [isSignIn, setIsSignIn] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const onChangeSignIn = () => {
+    setIsSignIn(!isSignIn)
+    setError(null)
+  }
+
   const onSubmit = async (
     values: SignInValues | SignUpValues,
-    { setSubmitting }: FormikHelpers<SignInValues | SignUpValues>,
+    { setSubmitting, resetForm }: FormikHelpers<SignInValues | SignUpValues>,
   ) => {
     let user = null
     if (isSignIn) {
@@ -62,12 +69,15 @@ const AuthForm: React.FC = () => {
       user = await signUp(dispatch, values as SignUpReq)
     }
 
+    setSubmitting(false)
+    resetForm()
+
     if (!user) {
       setError('Something went wrong! Try again soon.')
       return
     }
 
-    setSubmitting(false)
+    navigate('/chess')
   }
 
   return (
@@ -113,7 +123,7 @@ const AuthForm: React.FC = () => {
                 {isSignIn ? 'Need an account?' : 'Already have an account?'}
                 <button
                   type='button'
-                  onClick={() => setIsSignIn(!isSignIn)}
+                  onClick={onChangeSignIn}
                   className='text-blue-500 bg-inherit w-auto hover:border-[#242424] p-0 ml-1'
                 >
                   {isSignIn ? 'Sign Up' : 'Sign In'}
