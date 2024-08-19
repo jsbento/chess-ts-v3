@@ -24,6 +24,7 @@ import PromotionSquare from './PromotionSquare'
 import GameStatusModal from './GameStatusModal'
 
 import { useDimensions, useAppDispatch } from '@hooks'
+import { evaluatePosition } from '@behavior'
 import { openGameStatusModal, addMove, clearMoves } from '@reducers'
 import { PromotionPiece, Move, SelectedPiece } from '@types'
 
@@ -54,7 +55,10 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
   const [charBoard, setCharBoard] = useState<string[]>(getCharBoard(chess))
   const [promotion, setPromotion] = useState<Move | undefined>(undefined)
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece | null>(null)
+  const [score, setScore] = useState<number | null>(null)
   const gameOver = chess.isGameOver()
+  const currentFen = chess.fen()
+  const turn = chess.turn()
 
   useEffect(() => {
     if (gameOver) {
@@ -68,6 +72,20 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
       updateCharBoard()
     }
   }, [fen])
+
+  useEffect(() => {
+    ;(async () => {
+      const newScore = await evaluatePosition({ fen: currentFen })
+      if (!newScore) {
+        return
+      }
+      if (turn === 'b') {
+        setScore(-newScore)
+      } else {
+        setScore(newScore)
+      }
+    })()
+  }, [currentFen, turn])
 
   const updateCharBoard = () => {
     setCharBoard(getCharBoard(chess))
@@ -190,13 +208,18 @@ const Board: React.FC<BoardProps> = ({ fen, size }) => {
   }, [charBoard, cellSize, selectedPiece, promotion])
 
   return (
-    <div ref={ref} style={{ width: size, height: size }}>
-      <DndContext onDragEnd={onDragEnd} sensors={sensors}>
-        <div className='grid grid-cols-8 grid-rows-8 w-full h-full'>
-          {boardCells}
-        </div>
-      </DndContext>
-      <GameStatusModal resetBoard={resetBoard} />
+    <div className='w-full h-full'>
+      <h2 className='text-center text-2xl font-bold'>
+        Score: {score && (score / 100).toFixed(2)}
+      </h2>
+      <div ref={ref} style={{ width: size, height: size }}>
+        <DndContext onDragEnd={onDragEnd} sensors={sensors}>
+          <div className='grid grid-cols-8 grid-rows-8 w-full h-full'>
+            {boardCells}
+          </div>
+        </DndContext>
+        <GameStatusModal resetBoard={resetBoard} />
+      </div>
     </div>
   )
 }

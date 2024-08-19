@@ -28,7 +28,7 @@ const Root: React.FC = () => {
               )}
             </li>
             <li>
-              <Link to={'/home'}>Home</Link>
+              <Link to={'/'}>Home</Link>
             </li>
             <li>
               <Link to={'/chess'}>Play</Link>

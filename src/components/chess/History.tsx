@@ -23,7 +23,7 @@ const History: React.FC = () => {
   }
 
   return (
-    <div className='p-2 rounded-lg border-2 border-[#333] w-[30%] h-[500px]'>
+    <div className='p-2 rounded-lg border-2 border-[#333] w-1/2 h-[500px]'>
       <h2 className='font-semibold text-2xl text-center border-b-2 border-[#333] pb-4 h-[50px]'>
         Game History
       </h2>
